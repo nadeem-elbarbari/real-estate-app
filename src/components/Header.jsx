@@ -6,7 +6,7 @@ const Header = () => {
   const navigate = useNavigate();
   const pathMatchRoute = (route) => {
     if (route === location.pathname) {
-    console.log('route :', route);
+      console.log('route :', route);
       return true;
     }
   };
@@ -40,7 +40,8 @@ const Header = () => {
           <ul className="flex space-x-10">
             <li
               className={`py-3 cursor-pointer text-sm font-semibold text-gray-500 border-b-[3px] border-b-transparent ${
-                location.pathname == '/' && 'active'    }`}
+                pathMatchRoute('/') && 'active'
+              }`}
               onClick={() => {
                 navigate('/');
               }}
