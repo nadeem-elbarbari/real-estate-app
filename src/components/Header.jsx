@@ -6,7 +6,6 @@ const Header = () => {
   const navigate = useNavigate();
   const pathMatchRoute = (route) => {
     if (route === location.pathname) {
-      console.log('route :', route);
       return true;
     }
   };
