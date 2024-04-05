@@ -5,7 +5,7 @@ const GoogleAuthButton = () => {
     <>
       <button
         className="w-full rounded bg-red-600 hover:bg-red-700 text-white px-7 py-3 text-sm font-medium shadow-md hover:shadow-lg transition duration-200 ease-in-out active:bg-red-800 uppercase flex items-center justify-center gap-2"
-        type="submit"
+        type="button"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 256 262" className='bg-white rounded-full p-1'>
           <path

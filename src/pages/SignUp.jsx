@@ -1,25 +1,60 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import GoogleAuthButton from '../components/GoogleAuthButton';
+import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth';
+import { db } from '../Firebase.js';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const img = require('../assets/sign-in.jpg');
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    userName: '',
+    name: '',
     email: '',
     password: '',
   });
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const { userName, email, password } = formData;
+  const { name, email, password } = formData;
 
   function onChange(e) {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+
+    const auth = getAuth();
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        });
+        // Signed up
+        const user = userCredential.user;
+        // delete password before send data to DB
+        const formDataCopy = { ...formData };
+        delete formDataCopy.password;
+        formDataCopy.timestamp = serverTimestamp();
+        setDoc(doc(db, 'users', user.uid), formDataCopy);
+        navigate('/');
+      })
+      .catch((error) => {
+        toast.error('Something went wrong.', {
+          position: 'bottom-center',
+          theme: 'dark',
+          pauseOnFocusLoss: false,
+          pauseOnHover: false
+        });
+      });
   }
 
   return (
@@ -30,13 +65,12 @@ const SignUp = () => {
           <img src={img} alt="auth" className="w-full rounded-2xl" />
         </div>
         <div className="w-full md:w-[67%] lg:w-[45%] lg:ml-20">
-          <form>
-     
+          <form onSubmit={onSubmit}>
             <input
               className="w-full rounded mb-6 px-4 py-2 text-xl border text-gray-700 border-gray-300 bg-white transition ease-in-out"
               type="text"
-              id="userName"
-              value={userName}
+              id="name"
+              value={name}
               onChange={onChange}
               placeholder="Full Name"
             />{' '}
@@ -113,7 +147,7 @@ const SignUp = () => {
               className="w-full rounded bg-blue-600 hover:bg-blue-700 text-white px-7 py-3 text-sm font-medium shadow-md hover:shadow-lg transition duration-200 ease-in-out active:bg-blue-800 uppercase"
               type="submit"
             >
-              Sign in
+              Sign up
             </button>
             <div className="flex items-center my-4 before:border-t before:border-gray-300 before:flex-1 after:border-t after:border-gray-300 after:flex-1">
               <p className="text-center font-semibold mx-4">OR</p>
