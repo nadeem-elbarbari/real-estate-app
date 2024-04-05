@@ -1,13 +1,51 @@
-import React from 'react'
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { db } from '../Firebase.js';
+import React from 'react';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 const GoogleAuthButton = () => {
+  const navigate = useNavigate();
+
+  const connectWithGoogle = async () => {
+    try {
+      const auth = getAuth();
+      auth.useDeviceLanguage();
+      const provider = new GoogleAuthProvider();
+      const response = await signInWithPopup(auth, provider);
+      const user = response.user;
+
+      // check if user exists in database
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (!docSnap.exists()) {
+        await setDoc(docRef, {
+          name: user.displayName,
+          email: user.email,
+          timestamp: serverTimestamp(),
+        });
+      }
+      navigate('/');
+    } catch (error) {
+      toast.error("Couldn't connect to google");
+    }
+  };
   return (
     <>
       <button
+        onClick={connectWithGoogle}
         className="w-full rounded bg-red-600 hover:bg-red-700 text-white px-7 py-3 text-sm font-medium shadow-md hover:shadow-lg transition duration-200 ease-in-out active:bg-red-800 uppercase flex items-center justify-center gap-2"
         type="button"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 256 262" className='bg-white rounded-full p-1'>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="1.5rem"
+          height="1.5rem"
+          viewBox="0 0 256 262"
+          className="bg-white rounded-full p-1"
+        >
           <path
             fill="#4285f4"
             d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
@@ -29,6 +67,6 @@ const GoogleAuthButton = () => {
       </button>
     </>
   );
-}
+};
 
-export default GoogleAuthButton
+export default GoogleAuthButton;
