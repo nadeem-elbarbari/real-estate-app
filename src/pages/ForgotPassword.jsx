@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import GoogleAuthButton from '../components/GoogleAuthButton';
+import { toast } from 'react-toastify';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 
 const img = require('../assets/sign-in.jpg');
 
@@ -11,6 +13,17 @@ const ForgotPassword = () => {
     setEmail(e.target.value);
   }
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      await sendPasswordResetEmail(auth, email);
+      toast.success('Email sent successfully');
+    } catch (error) {
+      toast.error("This email may not exist");
+    }
+  };
+
   return (
     <section>
       <h1 className="text-3xl text-center mt-6 font-bold">Forgot Password</h1>
@@ -19,7 +32,7 @@ const ForgotPassword = () => {
           <img src={img} alt="auth" className="w-full rounded-2xl" />
         </div>
         <div className="w-full md:w-[67%] lg:w-[45%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               className="w-full rounded mb-6 px-4 py-2 text-xl border text-gray-700 border-gray-300 bg-white transition ease-in-out"
               type="email"
