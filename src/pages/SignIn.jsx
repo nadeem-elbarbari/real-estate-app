@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import GoogleAuthButton from '../components/GoogleAuthButton';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { toast } from 'react-toastify';
 
 const img = require('../assets/sign-in.jpg');
 
 const SignIn = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -13,6 +17,22 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { email, password } = formData;
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (user) {
+        navigate('/');
+      }
+    } catch (error) {
+      toast.error("There's a problem with credentials");
+    }
+  };
 
   function onChange(e) {
     setFormData((prevState) => ({
@@ -29,7 +49,7 @@ const SignIn = () => {
           <img src={img} alt="auth" className="w-full rounded-2xl" />
         </div>
         <div className="w-full md:w-[67%] lg:w-[45%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               className="w-full rounded mb-6 px-4 py-2 text-xl text-gray-700 border-gray-300 bg-white transition ease-in-out"
               type="email"
