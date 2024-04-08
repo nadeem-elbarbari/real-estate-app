@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { db } from '../Firebase';
+import SellOrRentButton from '../components/SellOrRentButton';
 
 const Profile = () => {
   const auth = getAuth();
@@ -74,7 +75,7 @@ const Profile = () => {
             disabled
             className="w-full text-gray-700 border border-gray-300 rounded bg-white transition ease-in-out text-xl"
           />
-          <div className="flex justify-between items-center whitespace-nowrap text-sm md:text-lg">
+          <div className="flex justify-between items-center whitespace-nowrap text-sm md:text-lg mb-6">
             <p>
               Do you want to change your name?{' '}
               <span
@@ -94,13 +95,8 @@ const Profile = () => {
               Logout
             </p>
           </div>
-          <button
-            type="button"
-            className="w-full rounded bg-blue-600 hover:bg-blue-700 text-white px-7 py-3 text-sm font-medium shadow-md hover:shadow-lg transition duration-200 ease-in-out active:bg-blue-800 uppercase"
-          >
-            sell or rent your home
-          </button>
         </form>
+        <SellOrRentButton />
       </div>
     </section>
   );

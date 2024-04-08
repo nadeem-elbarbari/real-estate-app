@@ -14,6 +14,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Layout from './Layout';
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './components/PrivateRoute';
+import CreatePost from './pages/CreatePost';
 
 function App() {
   const router = createBrowserRouter(
@@ -23,9 +24,10 @@ function App() {
         <Route path="/profile" element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
         </Route>
+        <Route path="/offers" element={<Offers />} />
+        <Route path="/create-post" element={<CreatePost />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/offers" element={<Offers />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
     )
